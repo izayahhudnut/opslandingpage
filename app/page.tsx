@@ -3,7 +3,7 @@
 import Hero from '@/components/Hero';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
-import { ArrowRight, Cloud, Container, Github, Hexagon, Activity, BarChart3 } from 'lucide-react';
+import { ArrowRight, Container, Github, Hexagon, BarChart3 } from 'lucide-react';
 import { AnimatedBeam } from "@/components/magicui/animated-beam";
 import React, { forwardRef, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -516,7 +516,7 @@ export default function Home() {
             {/* Elegant paragraph */}
             <div className="max-w-xl mx-auto">
               <p className="text-gray-300 text-xl font-light leading-relaxed">
-                Complex infrastructure shouldn't slow you down. 
+                Complex infrastructure shouldn&apos;t slow you down. 
                 <br className="hidden sm:block" />
                 We handle the operations, you focus on growth.
               </p>

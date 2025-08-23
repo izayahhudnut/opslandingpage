@@ -1,14 +1,12 @@
 "use client"
 
-import { useEffect, useState, useRef, forwardRef } from "react"
+import { useState, useRef, forwardRef } from "react"
 import { CustomTypingAnimation } from "@/components/custom-typing-animation"
 import { LiquidGlass } from "@/components/liquid-glass"
-import { ArrowUp, Loader2, Github, Server, Zap, Check, Database, Cloud, Globe, MonitorSpeaker, Network, Users, Activity, Shield, Gauge } from "lucide-react"
+import { ArrowUp, Loader2, Github, Server, Zap, Check, Gauge, Activity } from "lucide-react"
 import Image from "next/image"
-import { GridBeams } from "@/components/magicui/grid-beams";
 import { AnimatedList } from "@/components/magicui/animated-list";
 import { AnimatedCircularProgressBar } from "@/components/magicui/animated-circular-progress-bar";
-import { AnimatedBeam } from "@/components/magicui/animated-beam";
 import { Particles } from "@/components/magicui/particles";
 import { Ripple } from "@/components/magicui/ripple";
 import { cn } from "@/lib/utils";
@@ -33,10 +31,8 @@ const Circle = forwardRef<
 Circle.displayName = "Circle";
 
 const Hero = () => {
-  const [vw, setVw] = useState(1200)
   const [animationStage, setAnimationStage] = useState(0) // 0: initial, 1: arrow rotated, 2: loading, 3: boxes flying
   const [showBoxes, setShowBoxes] = useState([false, false, false])
-  const [cardLoadingStates, setCardLoadingStates] = useState([true, true, true])
   const [cardTextAnimated, setCardTextAnimated] = useState([false, false, false])
   const [moveHeaderAndInput, setMoveHeaderAndInput] = useState(false)
   
@@ -45,12 +41,6 @@ const Hero = () => {
   const optimizeRef = useRef<HTMLDivElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const update = () => setVw(window.innerWidth)
-    update()
-    window.addEventListener("resize", update)
-    return () => window.removeEventListener("resize", update)
-  }, [])
 
   const handleTypingComplete = () => {
     if (animationStage === 0) {
@@ -71,17 +61,14 @@ const Hero = () => {
           
           // Start loading animation for cards and then complete them
           setTimeout(() => {
-            setCardLoadingStates([false, true, true])
             setTimeout(() => setCardTextAnimated([true, false, false]), 100)
           }, 2000)
           
           setTimeout(() => {
-            setCardLoadingStates([false, false, true])
             setTimeout(() => setCardTextAnimated([true, true, false]), 100)
           }, 2500)
           
           setTimeout(() => {
-            setCardLoadingStates([false, false, false])
             setTimeout(() => setCardTextAnimated([true, true, true]), 100)
           }, 3000)
         }, 1500)

@@ -57,7 +57,7 @@ interface LightRayProps {
 }
 
 const LightRay = React.memo<LightRayProps>(
-  ({
+  function LightRay({
     left,
     rotation,
     width,
@@ -70,7 +70,7 @@ const LightRay = React.memo<LightRayProps>(
     opacity,
     speed,
     length,
-  }) => {
+  }) {
     return (
       <motion.div
         className="absolute pointer-events-none -top-[5%] left-[var(--ray-left)] w-[var(--ray-width)] h-[var(--ray-height)] origin-top mix-blend-screen bg-[linear-gradient(to_bottom,rgba(200,220,255,var(--ray-opacity)),rgba(200,220,255,0))] blur-[var(--ray-blur)] translate-x-[-50%] rotate-[var(--ray-rotation)]"
