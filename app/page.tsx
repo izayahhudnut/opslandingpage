@@ -7,9 +7,9 @@ import { ArrowRight, Container, Github, Hexagon, BarChart3 } from 'lucide-react'
 import { AnimatedBeam } from "@/components/magicui/animated-beam";
 import React, { forwardRef, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Spotlight } from "@/components/ui/spotlight-new";
-import { ThreeCardSection } from "@/components/ThreeCardSection";
 import { FlipWords } from "@/components/ui/flip-words";
+import { ThreeCardSection } from "@/components/ThreeCardSection";
+import { Spotlight } from "@/components/ui/spotlight-new";
 
 const Circle = forwardRef<
   HTMLDivElement,
@@ -205,17 +205,19 @@ function AnimatedBeamDemo() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
       <div className="flex items-center justify-center min-h-screen">
         <Hero />
       </div>
       
       {/* Combined Section with Spotlight positioned for Operational Intelligence Engine */}
-      <div className="relative w-full overflow-hidden bg-black">
-        <Spotlight 
-          translateY={-200}
-        />
+      <div className="relative w-full overflow-visible bg-black">
+        {/* Spotlight effect behind the Operations Intelligence section */}
+        <div className="absolute inset-x-0 top-0 z-0 overflow-visible pointer-events-none">
+          {/* Spotlight moved lower behind the Ops section */}
+          <Spotlight translateY={200} />
+        </div>
         
         {/* Always Running Section */}
         <div className="relative z-10">
@@ -277,7 +279,7 @@ export default function Home() {
                     {/* Only show border on top-left corner */}
                     <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-neutral-700 rounded-tl-3xl"></div>
                     
-                    <div className="relative w-full h-full bg-black transform scale-110 origin-top-left border border-white/10 rounded-2xl overflow-hidden">
+                    <div className="relative w-full h-full bg-black transform scale-110 origin-top-left border border-white/5 rounded-2xl overflow-hidden">
                       {/* Fade to black overlay - stronger on bottom and right */}
                       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-black/30 to-black pointer-events-none z-10"></div>
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black pointer-events-none z-10"></div>
@@ -334,7 +336,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Operational Intelligence Engine + Three Cards Section */}
+        {/* Operational Intelligence Engine Text Section */}
         <div className="relative z-10 bg-black/[0.02] bg-grid-white/[0.02]">
           {/* Text Section */}
           <div className="flex md:items-center md:justify-center h-48">
@@ -347,13 +349,13 @@ export default function Home() {
               </p>
             </div>
           </div>
-          
-          {/* Three Card Section within spotlight */}
-          <ThreeCardSection />
         </div>
       </div>
       
       
+      
+      {/* Three Card Section - restored per user request */}
+      <ThreeCardSection />
       {/* Third Section - DevOps Ecosystem */}
       <div className="bg-black" id="ecosystem-section">
         <div className="max-w-7xl mx-auto px-6 py-16">

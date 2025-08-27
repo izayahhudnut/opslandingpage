@@ -10,15 +10,13 @@ export function ThreeCardSection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (
-    <div className="relative bg-black py-16" id="three-card-section">
-      {/* Overlay to reduce spotlight brightness */}
-      <div className="absolute inset-0 bg-black/40 pointer-events-none"></div>
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
+    <div className="bg-black py-16" id="three-card-section">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Card 1 - Uptime as a Service */}
           <div 
-            className="relative group h-96 bg-gradient-to-br from-black via-gray-900/95 to-black rounded-2xl border border-white/30 overflow-hidden cursor-pointer transition-all duration-500 hover:border-white/40 hover:scale-[1.02]"
+            className="relative group h-96 border border-white/10   rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02]"
             onMouseEnter={() => setHoveredCard(1)}
             onMouseLeave={() => setHoveredCard(null)}
           >
@@ -39,7 +37,7 @@ export function ThreeCardSection() {
                 Uptime as a Service
               </h3>
               <p className="text-white/60 text-sm font-medium">
-                Selling peace of mind
+              Reduce the cognitive load
               </p>
             </div>
             
@@ -51,7 +49,7 @@ export function ThreeCardSection() {
 
           {/* Card 2 - Security & Compliance Ready */}
           <div 
-            className="relative group h-96 bg-gradient-to-br from-black via-gray-900/95 to-black rounded-2xl border border-white/30 overflow-hidden cursor-pointer transition-all duration-500 hover:border-white/40 hover:scale-[1.02]"
+            className="relative group h-96 border border-white/10  rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02]"
             onMouseEnter={() => setHoveredCard(2)}
             onMouseLeave={() => setHoveredCard(null)}
           >
@@ -91,7 +89,7 @@ export function ThreeCardSection() {
                 Security and compliance on autopilot
               </h3>
               <p className="text-white/60 text-sm font-medium">
-                Stop doing security work manually
+              Lower resource costs with automation
               </p>
             </div>
             
@@ -103,7 +101,7 @@ export function ThreeCardSection() {
 
           {/* Card 3 - Proactive Optimization */}
           <div 
-            className="relative group h-96 bg-gradient-to-br from-black via-gray-900/95 to-black rounded-2xl border border-white/30 overflow-hidden cursor-pointer transition-all duration-500 hover:border-white/40 hover:scale-[1.02]"
+            className="relative group h-96 border border-white/10  rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02]"
             onMouseEnter={() => setHoveredCard(3)}
             onMouseLeave={() => setHoveredCard(null)}
           >
@@ -122,7 +120,7 @@ export function ThreeCardSection() {
             {/* Content Layout */}
             <div className="absolute bottom-6 left-6 right-12">
               <h3 className="text-white font-medium text-lg leading-tight mb-2">
-                We find what&apos;s breaking tomorrow
+              Spot issues before they impact you
               </h3>
               <p className="text-white/60 text-sm font-medium">
                 Proactive optimization
