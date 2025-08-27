@@ -225,7 +225,7 @@ function Hero() {
       }`}>
         {/* Hero Header */}
         <h1 
-          className="relative z-10 text-[96px] font-medium tracking-[-0.03em] leading-[1] text-center text-transparent bg-clip-text animate-shimmer-very-slow flex items-center justify-center gap-4"
+          className="relative z-10 text-[96px] font-medium tracking-[-0.03em] text-center text-transparent bg-clip-text animate-shimmer-very-slow flex items-center justify-center gap-4"
           style={{
             backgroundImage:
               "linear-gradient(90deg, #777 0%, #999 35%, rgba(255,255,255,0.8) 45%, #fff 50%, rgba(255,255,255,0.8) 55%, #999 65%, #777 100%)",
@@ -396,8 +396,8 @@ function Hero() {
 
       <style jsx>{`
         @keyframes shimmer-very-slow {
-          0% { background-position: -200% 50%; }
-          100% { background-position: 200% 50%; }
+          0% { background-position: 200% 50%; }
+          100% { background-position: -200% 50%; }
         }
         @keyframes shimmer {
           0% { transform: translateX(-100%); }
