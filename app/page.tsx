@@ -7,12 +7,14 @@ import { ArrowRight, Container, Github, Hexagon, BarChart3 } from 'lucide-react'
 import { AnimatedBeam } from "@/components/magicui/animated-beam";
 import React, { forwardRef, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { LiquidGlass } from "@/components/liquid-glass";
+import { Spotlight } from "@/components/ui/spotlight";
+import { ThreeCardSection } from "@/components/ThreeCardSection";
+import { FlipWords } from "@/components/ui/flip-words";
 
 const Circle = forwardRef<
   HTMLDivElement,
   { className?: string; children?: React.ReactNode; message?: string }
->(({ className, children, message }, ref) => {
+>(({ className = "", children, message }, ref) => {
   const [isHovered, setIsHovered] = useState(false);
   
   return (
@@ -34,18 +36,11 @@ const Circle = forwardRef<
         <div 
           className="absolute -top-24 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none animate-in fade-in duration-200"
         >
-          <LiquidGlass
-            variant="panel"
-            intensity="medium"
-            rippleEffect={false}
-            flowOnHover={true}
-            stretchOnDrag={false}
-            className="px-8 py-4 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-md rounded-full shadow-lg w-80 h-14 flex items-center justify-center border border-white/20"
-          >
+          <div className="px-8 py-4 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-md rounded-full shadow-lg w-80 h-14 flex items-center justify-center border border-white/20">
             <div className="text-center px-1">
               <span className="text-white text-sm font-medium leading-relaxed tracking-wide">{message}</span>
             </div>
-          </LiquidGlass>
+          </div>
           {/* Arrow pointer */}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
             <div className="w-0 h-0 border-l-6 border-r-6 border-t-6 border-l-transparent border-r-transparent border-t-white/10"></div>
@@ -216,121 +211,117 @@ export default function Home() {
         <Hero />
       </div>
       
-      {/* About Section - Linear Style */}
-      <div className="bg-gradient-to-b from-white/5 via-white/3 to-black" id="about-section">
-        <div className="max-w-7xl mx-auto px-6 pt-40 pb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left Content */}
-            <div className="space-y-6 animate-in slide-in-from-bottom-8 fade-in duration-1000" id="about-content">
-              {/* Meta Label */}
-              <div className="flex items-center gap-3">
-                <Image
-                  src="/icon.svg"
-                  alt="Icon"
-                  width={20}
-                  height={20}
-                  className="w-5 h-5"
-                />
-                <div className="text-gray-400 text-sm font-medium uppercase tracking-wider">
-                  Always Running
+      {/* Combined Always Running + Spotlight Section */}
+      <div className="relative w-full overflow-hidden">
+        {/* First part: Always Running with black background */}
+        <div className="bg-black">
+          <div className="max-w-7xl mx-auto px-6 pt-40 pb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* Left Content */}
+              <div className="space-y-6 animate-in slide-in-from-bottom-8 fade-in duration-1000" id="about-content">
+                {/* Meta Label */}
+                <div className="flex items-center gap-3">
+                  <Image
+                    src="/icon.svg"
+                    alt="Icon"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
+                  <div className="text-gray-400 text-sm font-medium uppercase tracking-wider">
+                    Always Running
+                  </div>
                 </div>
+                
+                {/* Hero Headline with FlipWords */}
+                <h2 className="text-4xl lg:text-5xl font-normal text-white leading-tight">
+                  Keep your
+                  <FlipWords 
+                    words={["bank", "hospital", "startup", "platform", "business", "application"]} 
+                    duration={2500}
+                    className="text-white"
+                  />
+                  <br />
+                  online 24/7
+                </h2>
+                
+                {/* Supporting Copy */}
+                <p className="text-gray-300 text-lg leading-relaxed max-w-lg">
+                  Monitor critical infrastructure and resolve issues before they impact users. 
+                  Eliminate emergency alerts and prevent system failures.
+                </p>
+                
+                {/* CTA Button */}
+                <div className="pt-6">
+                  <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-white to-gray-50 text-black font-medium rounded-lg hover:from-gray-50 hover:to-gray-100 transition-all shadow-lg shadow-white/20 hover:shadow-lg hover:shadow-white/25">
+                    Get Started
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+                
               </div>
               
-              {/* Hero Headline */}
-              <h2 className="text-4xl lg:text-5xl font-normal text-white leading-tight">
-                Automated
-                <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-                  reliability
-                </span>
-              </h2>
-              
-              {/* Supporting Copy */}
-              <p className="text-gray-300 text-lg leading-relaxed max-w-lg">
-                We watch your servers 24/7 and fix problems before your users notice. 
-                No more 3am wake-up calls.
-              </p>
-              
-              {/* CTA Button */}
-              <div className="pt-6">
-                <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-white to-gray-50 text-black font-medium rounded-lg hover:from-gray-50 hover:to-gray-100 transition-all shadow-lg shadow-white/20 hover:shadow-lg hover:shadow-white/25">
-                  Get Started
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-              
-            </div>
-            
-            {/* Right Visual - System Health Report */}
-            <div className="relative overflow-visible h-64 animate-in slide-in-from-right-8 fade-in duration-1000 delay-300" id="health-report">
-              <div className="transform rotate-3 rotateX-12 perspective-1000 scale-125 -translate-y-8" style={{ transformStyle: 'preserve-3d' }}>
-                <div className="relative bg-black/95 backdrop-blur border border-white/5 rounded-xl p-6 shadow-2xl">
-                  {/* Fade overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 rounded-xl pointer-events-none z-10"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/60 rounded-xl pointer-events-none z-10"></div>
-                  {/* 3D Edge Effect */}
-                  <div className="absolute -inset-1 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-xl blur-sm -z-10"></div>
-                  <div className="absolute -right-4 -bottom-4 w-full h-full bg-black/60 rounded-xl -z-20 transform translate-x-3 translate-y-3"></div>
-                  {/* Report Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <h3 className="text-white text-sm font-semibold">System Health Report</h3>
-                    </div>
-                    <div className="text-xs text-gray-500">Live</div>
-                  </div>
-                  
-                  {/* Critical Metrics */}
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center justify-between py-2 border-b border-white/5">
-                      <span className="text-gray-300 text-sm">System Status</span>
-                      <span className="text-green-400 text-sm font-medium">Operational</span>
-                    </div>
-                    <div className="flex items-center justify-between py-2 border-b border-white/5">
-                      <span className="text-gray-300 text-sm">Response Time</span>
-                      <span className="text-blue-400 text-sm font-medium">127ms</span>
-                    </div>
-                    <div className="flex items-center justify-between py-2 border-b border-white/5">
-                      <span className="text-gray-300 text-sm">Active Incidents</span>
-                      <span className="text-gray-400 text-sm font-medium">0</span>
-                    </div>
-                  </div>
-                  
-                  {/* Recent Activity */}
-                  <div className="mb-6">
-                    <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-3">Recent Activity</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3 text-xs">
-                        <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                        <span className="text-gray-300">Deploy completed - v2.1.3</span>
-                        <span className="text-gray-500 ml-auto">2m ago</span>
+              {/* Right Visual - Before/After Compare */}
+              <div className="relative h-80 animate-in slide-in-from-right-8 fade-in duration-1000 delay-300" id="compare-demo">
+                <div className="w-full h-full flex items-center justify-center [perspective:800px] [transform-style:preserve-3d]">
+                  <div
+                    style={{
+                      transform: "rotateX(15deg) translateZ(80px)",
+                    }}
+                    className="relative w-full h-full overflow-hidden"
+                  >
+                    {/* Only show border on top-left corner */}
+                    <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-neutral-700 rounded-tl-3xl"></div>
+                    
+                    <div className="relative w-full h-full bg-black transform scale-110 origin-top-left border border-white/10 rounded-2xl overflow-hidden">
+                      {/* Fade to black overlay - stronger on bottom and right */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-black/30 to-black pointer-events-none z-10"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black pointer-events-none z-10"></div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black pointer-events-none z-10"></div>
+                      
+                      {/* Zoomed Dashboard View - showing only top-left corner */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-green-900/20 animate-pulse opacity-20 scale-150 -translate-x-8 -translate-y-8"></div>
+                      
+                      {/* Main Content Zoomed */}
+                      <div className="relative p-8 scale-150 origin-top-left -translate-x-4 -translate-y-4">
+                        {/* Main Metric */}
+                        <div className="space-y-2 animate-fade-in-up mb-4">
+                          <div className="flex items-center gap-3">
+                            <span className="text-5xl font-bold text-white animate-pulse">99.97%</span>
+                            <svg className="w-5 h-5 text-green-400 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <div className="text-base text-gray-400 animate-fade-in" style={{animationDelay: '0.5s'}}>
+                            Uptime · <span className="text-green-400 animate-pulse">Global</span>
+                          </div>
+                        </div>
+
+                        {/* Status Pills in Row */}
+                        <div className="flex gap-2 mb-6 flex-wrap">
+                          <div className="px-3 py-1 bg-white/15 rounded-full text-xs text-white/90 border border-white/30 animate-fade-in backdrop-blur-sm" style={{animationDelay: '1s'}}>
+                            Auto-remediation active
+                          </div>
+                          <div className="px-3 py-1 bg-white/15 rounded-full text-xs text-white/90 border border-white/30 animate-fade-in backdrop-blur-sm opacity-70" style={{animationDelay: '1.2s'}}>
+                            Security patched
+                          </div>
+                          <div className="px-3 py-1 bg-white/15 rounded-full text-xs text-white/90 border border-white/30 animate-fade-in backdrop-blur-sm opacity-40" style={{animationDelay: '1.4s'}}>
+                            Error detection on
+                          </div>
+                        </div>
+
+                        {/* Bottom Text - heavily faded */}
+                        <div className="space-y-2 opacity-60">
+                          <h3 className="text-xl font-semibold text-white animate-fade-in" style={{animationDelay: '1.8s'}}>Smart Infrastructure</h3>
+                          <p className="text-sm text-gray-400 leading-relaxed max-w-48 animate-fade-in opacity-50" style={{animationDelay: '2s'}}>
+                            Advanced monitoring with predictive insights...
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 text-xs">
-                        <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                        <span className="text-gray-300">Database backup finished</span>
-                        <span className="text-gray-500 ml-auto">15m ago</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs">
-                        <div className="w-1.5 h-1.5 bg-orange-400 rounded-full"></div>
-                        <span className="text-gray-300">SSL certificate renewed</span>
-                        <span className="text-gray-500 ml-auto">1h ago</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Performance Summary */}
-                  <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/5">
-                    <div className="text-center">
-                      <div className="text-sm font-bold text-green-400">99.98%</div>
-                      <div className="text-xs text-gray-500">Uptime</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-sm font-bold text-blue-400">1.2s</div>
-                      <div className="text-xs text-gray-500">Avg Response</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-sm font-bold text-white">24/7</div>
-                      <div className="text-xs text-gray-500">Monitoring</div>
+
+                      {/* Floating particles - fewer and more subtle */}
+                      <div className="absolute top-8 right-16 w-1 h-1 bg-white/20 rounded-full animate-ping opacity-30" style={{animationDelay: '1s'}}></div>
+                      <div className="absolute top-20 left-32 w-1 h-1 bg-green-400/30 rounded-full animate-ping opacity-20" style={{animationDelay: '2s'}}></div>
                     </div>
                   </div>
                 </div>
@@ -338,7 +329,34 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Second part: Spotlight background starts here */}
+        <div className="relative flex h-[20rem] w-full bg-black/[0.02] antialiased items-center justify-center">
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-0 [background-size:40px_40px] select-none opacity-10",
+              "[background-image:linear-gradient(to_right,#171717_1px,transparent_1px),linear-gradient(to_bottom,#171717_1px,transparent_1px)]",
+            )}
+          />
+          
+          <Spotlight
+            className="-top-20 left-0 md:-top-10 md:left-40"
+            fill="white"
+          />
+          
+          <div className="relative z-10 mx-auto w-full max-w-4xl p-4 text-center">
+            <h1 className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-center text-3xl font-bold text-transparent md:text-5xl leading-tight mb-4">
+              Operational Intelligence Engine
+            </h1>
+            <p className="mx-auto max-w-2xl text-center text-lg font-normal text-neutral-300">
+              The missing layer that bridges platform engineering, security, and automation.
+            </p>
+          </div>
+        </div>
       </div>
+      
+      {/* Three Card Section */}
+      <ThreeCardSection />
       
       {/* Much More Vertical Space */}
       <div className="h-64 bg-black"></div>
@@ -445,7 +463,8 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left Visual - Connected Services */}
             <div className="animate-in slide-in-from-left-8 fade-in duration-1000" id="services-visual">
-              <AnimatedBeamDemo />
+              {/* @ts-ignore */}
+        <AnimatedBeamDemo />
             </div>
             
             {/* Right Content */}
@@ -534,7 +553,7 @@ export default function Home() {
           <div className="border-b border-white/5 pt-16"></div>
         </div>
       </div>
-      
+
       {/* Footer */}
       <footer className="bg-black/80 backdrop-blur-md border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

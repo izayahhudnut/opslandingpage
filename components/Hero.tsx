@@ -1,27 +1,41 @@
 "use client"
 
-import { useState, useRef, forwardRef } from "react"
+import React, { useState, useRef, forwardRef, useEffect } from "react"
 import { CustomTypingAnimation } from "@/components/custom-typing-animation"
 import { LiquidGlass } from "@/components/liquid-glass"
-import { ArrowUp, Loader2, Github, Server, Zap, Check, Gauge, Activity } from "lucide-react"
+import { CometCard } from "@/components/ui/comet-card"
+import { ArrowUp, Loader2, AlertTriangle, Activity, Search, Check, TrendingDown, TrendingUp, BarChart3, Zap, Eye, Bug, Clock, Layers, MonitorSpeaker, FileSearch, Terminal as TerminalIcon, DollarSign, Users, Wrench } from "lucide-react"
 import Image from "next/image"
 import { AnimatedList } from "@/components/magicui/animated-list";
 import { AnimatedCircularProgressBar } from "@/components/magicui/animated-circular-progress-bar";
-import { Particles } from "@/components/magicui/particles";
-import { Ripple } from "@/components/magicui/ripple";
-import { cn } from "@/lib/utils";
+import { Terminal, TypingAnimation, AnimatedSpan } from "@/components/magicui/terminal";
+import dynamic from "next/dynamic";
+import { Globe } from "@/components/magicui/globe";
+import { EnhancedActivityFeed } from "@/components/EnhancedActivityFeed";
+import { LiveTerminalDemo } from "@/components/LiveTerminalDemo";
+import { AIGlobeView } from "@/components/AIGlobeView";
 
+// Circle component for the button
 const Circle = forwardRef<
   HTMLDivElement,
-  { className?: string; children?: React.ReactNode }
->(({ className, children }, ref) => {
+  {
+    className?: string;
+    children?: React.ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+  }
+>(({ className, children, onClick, disabled }, ref) => {
   return (
     <div
       ref={ref}
-      className={cn(
-        "z-10 flex size-12 items-center justify-center rounded-full border-2 bg-white p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)]",
-        className,
-      )}
+      onClick={disabled ? undefined : onClick}
+      className={`
+        z-10 flex size-12 items-center justify-center rounded-full border-2 bg-white p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)]
+        ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"} 
+        ${className}
+      `}
+      role="button"
+      tabIndex={0}
     >
       {children}
     </div>
@@ -30,115 +44,205 @@ const Circle = forwardRef<
 
 Circle.displayName = "Circle";
 
-const Hero = () => {
-  const [animationStage, setAnimationStage] = useState(0) // 0: initial, 1: arrow rotated, 2: loading, 3: boxes flying
-  const [showBoxes, setShowBoxes] = useState([false, false, false])
-  const [cardTextAnimated, setCardTextAnimated] = useState([false, false, false])
-  const [moveHeaderAndInput, setMoveHeaderAndInput] = useState(false)
-  
-  const containerRef = useRef<HTMLDivElement>(null)
-  const monitorRef = useRef<HTMLDivElement>(null)
-  const optimizeRef = useRef<HTMLDivElement>(null)
-  const resultRef = useRef<HTMLDivElement>(null)
-
-
-  const handleTypingComplete = () => {
-    if (animationStage === 0) {
-      setAnimationStage(1)
-      
-      // Pressed animation, then loading
-      setTimeout(() => {
-        setAnimationStage(2)
-        
-        // Show boxes one by one
-        setTimeout(() => {
-          setAnimationStage(3)
-          setMoveHeaderAndInput(true) // Start moving header and input immediately
-          
-          setTimeout(() => setShowBoxes([true, false, false]), 1000)
-          setTimeout(() => setShowBoxes([true, true, false]), 3000)
-          setTimeout(() => setShowBoxes([true, true, true]), 5000)
-          
-          // Start loading animation for cards and then complete them
-          setTimeout(() => {
-            setTimeout(() => setCardTextAnimated([true, false, false]), 100)
-          }, 2000)
-          
-          setTimeout(() => {
-            setTimeout(() => setCardTextAnimated([true, true, false]), 100)
-          }, 2500)
-          
-          setTimeout(() => {
-            setTimeout(() => setCardTextAnimated([true, true, true]), 100)
-          }, 3000)
-        }, 1500)
-      }, 500)
+// Prompts data structure
+const prompts = [
+  {
+    text: "How can I reduce incident response time by 70%?",
+    cardType: 0, // Incident Response  
+    gradient: "from-red-500 to-orange-600",
+    cardData: {
+      mttr: "14m",
+      incidents: [
+        { service: "API Gateway", duration: "Resolved", color: "green" },
+        { service: "Database", duration: "2m ago", color: "yellow" },
+        { service: "Cache Layer", duration: "Active", color: "red" },
+      ],
+      healthScore: 94,
+      metrics: [
+        { name: "CPU", value: 45, threshold: 100 },
+        { name: "Memory", value: 67, threshold: 100 },
+        { name: "Disk I/O", value: 23, threshold: 100 },
+      ],
+      activities: [
+        { type: "success", message: "Auto-resolved API timeout", time: "2m" },
+        { type: "warning", message: "High memory usage detected", time: "5m" },
+        { type: "info", message: "Backup completed", time: "12m" },
+      ]
+    }
+  },
+  {
+    text: "What's the best way to optimize my cloud infrastructure costs?",
+    cardType: 1, // Infrastructure Optimization
+    gradient: "from-emerald-500 to-green-600",
+    cardData: {
+      monthlySavings: "$12,400",
+      services: "47",
+      healthScore: 97,
+      metrics: [
+        { name: "Cost Efficiency", value: 89, threshold: 100 },
+        { name: "Resource Utilization", value: 76, threshold: 100 },
+        { name: "Auto-scaling", value: 92, threshold: 100 },
+      ],
+      activities: [
+        { type: "success", message: "Scaled down unused instances", time: "15m" },
+        { type: "success", message: "Optimized storage costs", time: "1h" },
+        { type: "info", message: "Scheduled maintenance", time: "2h" },
+      ]
+    }
+  },
+  {
+    text: "Can you show me real-time monitoring across all regions?",
+    cardType: 2, // Global Monitoring
+    gradient: "from-blue-500 to-indigo-600",
+    cardData: {
+      globalUptime: "99.97%",
+      regions: 12,
+      healthScore: 96,
+      metrics: [
+        { name: "Global Latency", value: 85, threshold: 100 },
+        { name: "Availability", value: 99, threshold: 100 },
+        { name: "Throughput", value: 78, threshold: 100 },
+      ],
+      activities: [
+        { type: "success", message: "All regions operational", time: "now" },
+        { type: "info", message: "Failover test completed", time: "30m" },
+        { type: "success", message: "CDN cache optimized", time: "1h" },
+      ]
     }
   }
+];
+
+function Hero() {
+  const [animationStage, setAnimationStage] = useState(0);
+  const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [cardAnimated, setCardAnimated] = useState(false);
+  const [contentReadyCards, setContentReadyCards] = useState<number[]>([]);
+  const [moveHeaderAndInput, setMoveHeaderAndInput] = useState(false);
+  const [revealedCards, setRevealedCards] = useState<number[]>([]); // Track which cards have been revealed
+  const cyclingStartedRef = useRef(false);
+  const cycleStartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cycleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Auto-start animation on page load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startAnimation();
+    }, 1000); // Start after 1 second
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Auto-cycle through all prompts; ensure we don't accidentally clear interval on re-renders
+  useEffect(() => {
+    if (animationStage !== 4 || cyclingStartedRef.current) return;
+    cyclingStartedRef.current = true;
+
+    cycleStartTimeoutRef.current = setTimeout(() => {
+      let currentIndex = 0;
+
+      const cycleToNextPrompt = () => {
+        currentIndex = (currentIndex + 1) % prompts.length;
+        
+        // If we've completed all 3 prompts (back to 0), reset everything
+        if (currentIndex === 0) {
+          setRevealedCards([]);
+          setContentReadyCards([]);
+        }
+        
+        setCardAnimated(false);
+        setAnimationStage(1);
+        setCurrentPromptIndex(currentIndex);
+        setTimeout(() => setAnimationStage(2), 500);
+      };
+
+      cycleToNextPrompt();
+      cycleIntervalRef.current = setInterval(cycleToNextPrompt, 12000);
+    }, 3000);
+  }, [animationStage]);
+
+  // Cleanup only on unmount
+  useEffect(() => {
+    return () => {
+      if (cycleStartTimeoutRef.current) clearTimeout(cycleStartTimeoutRef.current);
+      if (cycleIntervalRef.current) clearInterval(cycleIntervalRef.current);
+    };
+  }, []);
+
+  const startAnimation = () => {
+    setAnimationStage(1); // Move header up, show spinner
+    setMoveHeaderAndInput(true);
+
+    setTimeout(() => {
+      setAnimationStage(2); // Start typing animation - onComplete will handle the rest
+    }, 1000);
+  };
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Animated Background Bulbs */}
+      {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div 
-          className="absolute top-20 left-10 w-96 h-96 rounded-full blur-3xl animate-float-slow"
+          className="absolute top-20 left-10 w-96 h-96 rounded-full blur-3xl animate-float-slow-pulse opacity-50"
           style={{
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.08) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.20) 40%, transparent 70%)',
           }}
         ></div>
         <div 
-          className="absolute top-40 right-20 w-80 h-80 rounded-full blur-3xl animate-float-slower"
+          className="absolute top-40 right-20 w-80 h-80 rounded-full blur-3xl animate-float-slower-pulse opacity-45"
           style={{
-            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(168, 85, 247, 0.06) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.32) 0%, rgba(168, 85, 247, 0.18) 40%, transparent 70%)',
           }}
         ></div>
         <div 
-          className="absolute bottom-32 left-20 w-72 h-72 rounded-full blur-3xl animate-float-reverse"
+          className="absolute bottom-32 left-20 w-72 h-72 rounded-full blur-3xl animate-float-reverse-pulse opacity-55"
           style={{
-            background: 'radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(34, 197, 94, 0.30) 0%, rgba(34, 197, 94, 0.18) 40%, transparent 70%)',
           }}
         ></div>
         <div 
-          className="absolute bottom-20 right-32 w-64 h-64 rounded-full blur-3xl animate-float-diagonal"
+          className="absolute bottom-20 right-32 w-64 h-64 rounded-full blur-3xl animate-float-diagonal-pulse opacity-60"
           style={{
-            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(6, 182, 212, 0.06) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.32) 0%, rgba(6, 182, 212, 0.20) 40%, transparent 70%)',
           }}
         ></div>
         <div 
-          className="absolute top-60 left-1/2 w-80 h-80 rounded-full blur-3xl animate-float-orbit"
+          className="absolute top-60 left-1/2 w-80 h-80 rounded-full blur-3xl animate-float-orbit-pulse opacity-40"
           style={{
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, rgba(99, 102, 241, 0.16) 40%, transparent 70%)',
           }}
         ></div>
         <div 
-          className="absolute bottom-40 left-1/3 w-56 h-56 rounded-full blur-3xl animate-float-gentle"
+          className="absolute bottom-40 left-1/3 w-56 h-56 rounded-full blur-3xl animate-float-gentle-pulse opacity-50"
           style={{
-            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, rgba(236, 72, 153, 0.04) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.30) 0%, rgba(236, 72, 153, 0.16) 40%, transparent 70%)',
           }}
         ></div>
       </div>
-      {/* Header and Input - Fixed Position */}
+
       <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-10 w-full max-w-7xl px-4 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-        moveHeaderAndInput ? '-translate-y-[120%]' : '-translate-y-1/2'
+        moveHeaderAndInput ? '-translate-y-[45%]' : '-translate-y-1/2'
       }`}>
-        <h1
+        {/* Hero Header */}
+        <h1 
           className="relative z-10 text-[96px] font-medium tracking-[-0.03em] leading-[1] text-center text-transparent bg-clip-text animate-shimmer-very-slow flex items-center justify-center gap-4"
           style={{
             backgroundImage:
               "linear-gradient(90deg, #777 0%, #999 35%, rgba(255,255,255,0.8) 45%, #fff 50%, rgba(255,255,255,0.8) 55%, #999 65%, #777 100%)",
-            backgroundSize: "250% 100%",
+            backgroundSize: '200% 100%',
             fontFamily: "Inter, sans-serif",
+            animation: 'shimmer-very-slow 3s ease-in-out infinite',
+            backgroundPosition: '0% 50%'
           }}
         >
-          SMART DEPLOY WITH
+          Smart Deploy with
           <Image
             src="/icon.svg"
-            alt="Icon"
+            alt="Ops Icon"
             width={96}
             height={96}
-            className="w-24 h-24 inline-block mx-3 -mr-3 opacity-75"
-          />
-          PS
+            className="w-24 h-24 inline-block -mr-3 opacity-75"
+          />ps
         </h1>
 
         {/* ChatGPT-style glass input */}
@@ -153,269 +257,152 @@ const Hero = () => {
           <div className="flex w-full items-center gap-2">
             <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap leading-none">
               <span className="block truncate text-base text-gray-300">
-                <CustomTypingAnimation 
-                  text="Improve homepage speed"
-                  speed={80}
-                  className="text-gray-300"
-                  loop={true}
-                  pauseDuration={1500}
-                  onComplete={handleTypingComplete}
-                />
+                {animationStage > 0 && (
+                  <CustomTypingAnimation
+                    className="text-gray-300"
+                    speed={20}
+                    text={prompts[currentPromptIndex].text}
+                    key={currentPromptIndex}
+                    onComplete={() => {
+                      // When typing finishes, always proceed to spinner -> check -> cards
+                      setAnimationStage(2.5); // Show loading spinner
+                        setTimeout(() => {
+                          setAnimationStage(3); // Show green checkmark
+                          setTimeout(() => {
+                            setAnimationStage(4); // Reveal cards
+                            setCurrentCardIndex(currentPromptIndex);
+                            setRevealedCards(prev => (
+                              prev.includes(currentPromptIndex) ? prev : [...prev, currentPromptIndex]
+                            ));
+                            setContentReadyCards(prev => (
+                              prev.includes(currentPromptIndex) ? prev : [...prev, currentPromptIndex]
+                            ));
+                            setCardAnimated(true);
+                          }, 800);
+                        }, 1000);
+                    }}
+                  />
+                )}
               </span>
             </div>
-
             <button
+              onClick={animationStage === 0 ? startAnimation : undefined}
               className={`shrink-0 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ${
                 animationStage >= 3 ? 'bg-green-500/80 hover:bg-green-500' : 
-                animationStage === 1 ? 'transform rotate-90 scale-95 bg-white/40' : 'bg-white/20 hover:bg-white/30'
+                animationStage === 2.5 ? 'transform rotate-90 scale-95 bg-white/40' : 'bg-white/20 hover:bg-white/30'
               }`}
               aria-label="Send"
             >
-              {animationStage === 2 ? (
-                <Loader2 className="w-4 h-4 text-white animate-spin" />
-              ) : animationStage >= 3 ? (
+              {animationStage >= 3 ? (
                 <Check className="w-4 h-4 text-white" />
+              ) : animationStage === 2.5 ? (
+                <Loader2 className="w-4 h-4 text-white animate-spin" />
               ) : (
                 <ArrowUp className={`w-4 h-4 text-white transition-transform duration-300 ${
-                  animationStage === 1 ? 'rotate-90' : ''
+                  animationStage === 0 ? 'hover:scale-110' : ''
                 }`} />
               )}
             </button>
           </div>
         </LiquidGlass>
+
+        {/* Cards Carousel Layout */}
+        {revealedCards.length > 0 && (
+          <div className="mt-2 w-full relative">
+            <div className="relative flex justify-center items-center min-h-[40rem] py-8" style={{ perspective: '1500px', transformStyle: 'preserve-3d' }}>
+              {/* Card 1 - Animated List */}
+              <div 
+                className={`absolute transition-all duration-[1000ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]`}
+                style={{ 
+                  transform: `translateY(${revealedCards.includes(0) ? '0px' : '100px'}) translateX(${ 
+                    currentCardIndex === 0 ? '0px' : 
+                    currentCardIndex === 1 ? '-270px' : 
+                    '270px'
+                  }) scale(${currentCardIndex === 0 ? '1' : '0.85'})`,
+                  opacity: revealedCards.includes(0) ? (currentCardIndex === 0 ? 1 : 0.2) : 0,
+                  zIndex: currentCardIndex === 0 ? 30 : (currentCardIndex === 1 ? 10 : 20),
+                  transitionDelay: animationStage >= 4 ? '0ms' : '0ms'
+                }}>
+                <CometCard className="w-[40rem] h-[36rem]" rotateDepth={currentCardIndex === 0 ? 18 : 8} translateDepth={currentCardIndex === 0 ? 30 : 15}>
+                  <div className="w-full h-full bg-white/5 backdrop-blur-2xl rounded-xl border border-white/20 overflow-hidden shadow-2xl shadow-white/5">
+                    <div className="p-4 h-full flex items-center justify-center">
+                      {contentReadyCards.includes(0) ? (
+                        <EnhancedActivityFeed />
+                      ) : (
+                        <div className="animate-pulse w-8 h-8 bg-white/10 rounded-full"></div>
+                      )}
+                    </div>
+                  </div>
+                </CometCard>
+              </div>
+
+              {/* Card 2 - Terminal */}
+              <div 
+                className={`absolute transition-all duration-[1000ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]`}
+                style={{ 
+                  transform: `translateY(${revealedCards.includes(1) ? '0px' : '100px'}) translateX(${ 
+                    currentCardIndex === 1 ? '0px' : 
+                    currentCardIndex === 2 ? '-270px' : 
+                    '270px'
+                  }) scale(${currentCardIndex === 1 ? '1' : '0.85'})`,
+                  opacity: revealedCards.includes(1) ? (currentCardIndex === 1 ? 1 : 0.2) : 0,
+                  zIndex: currentCardIndex === 1 ? 30 : (currentCardIndex === 2 ? 10 : 20),
+                  transitionDelay: animationStage >= 3 ? '200ms' : '200ms'
+                }}>
+                <CometCard className="w-[40rem] h-[36rem]" rotateDepth={currentCardIndex === 1 ? 18 : 8} translateDepth={currentCardIndex === 1 ? 30 : 15}>
+                  <div className="w-full h-full bg-white/5 backdrop-blur-2xl rounded-xl border border-white/20 overflow-hidden shadow-2xl shadow-white/5">
+                    <div className="p-4 h-full flex items-center justify-center">
+                      {contentReadyCards.includes(1) ? (
+                        <LiveTerminalDemo />
+                      ) : (
+                        <div className="animate-pulse w-8 h-8 bg-white/10 rounded-full"></div>
+                      )}
+                    </div>
+                  </div>
+                </CometCard>
+              </div>
+
+              {/* Card 3 - Globe */}
+              <div 
+                className={`absolute transition-all duration-[1000ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]`}
+                style={{ 
+                  transform: `translateY(${revealedCards.includes(2) ? '0px' : '100px'}) translateX(${ 
+                    currentCardIndex === 2 ? '0px' : 
+                    currentCardIndex === 0 ? '-270px' : 
+                    '270px'
+                  }) scale(${currentCardIndex === 2 ? '1' : '0.85'})`,
+                  opacity: revealedCards.includes(2) ? (currentCardIndex === 2 ? 1 : 0.2) : 0,
+                  zIndex: currentCardIndex === 2 ? 30 : (currentCardIndex === 0 ? 10 : 20),
+                  transitionDelay: animationStage >= 3 ? '400ms' : '400ms'
+                }}>
+                <CometCard className="w-[40rem] h-[36rem]" rotateDepth={currentCardIndex === 2 ? 18 : 8} translateDepth={currentCardIndex === 2 ? 30 : 15}>
+                  <div className="w-full h-full bg-white/5 backdrop-blur-2xl rounded-xl border border-white/20 overflow-hidden shadow-2xl shadow-white/5">
+                    <div className="p-3 h-full">
+                      {contentReadyCards.includes(2) ? (
+                        <AIGlobeView />
+                      ) : (
+                        <div className="h-full flex items-center justify-center">
+                          <div className="animate-pulse w-8 h-8 bg-white/10 rounded-full"></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CometCard>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Floating Glass Boxes - Separate Positioning */}
-      {animationStage >= 3 && (
-        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex gap-12" style={{ perspective: '1500px', transformStyle: 'preserve-3d' }}>
-          <div className={`flex flex-col transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${
-            showBoxes[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-          }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-6 h-6 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
-                <Github className="w-3 h-3 text-white/60" />
-              </div>
-              <h3 className="text-white/60 text-2xl font-medium">Repository Activity</h3>
-            </div>
-            <LiquidGlass
-              variant="panel"
-              intensity="medium"
-              rippleEffect={false}
-              flowOnHover={true}
-              stretchOnDrag={false}
-              className="w-80 h-80 bg-gradient-to-br from-white/20 via-white/10 to-white/5 backdrop-blur-md rounded-xl shadow-2xl shadow-black/30 border border-white/20 border-t-white/30 border-l-white/25"
-              style={{
-                animation: `float1 4.5s ease-in-out infinite`,
-                transform: 'rotateX(15deg) rotateY(-8deg) translateZ(20px)',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3)'
-              }}
-            >
-              <div className="w-full h-full flex flex-col px-0.5 py-1">
-                <div className="flex-1">
-                  {cardTextAnimated[0] ? (
-                    <AnimatedList delay={800} className="w-full h-full flex flex-col gap-2">
-                      <div className="flex items-center gap-3 text-sm text-gray-200 bg-white/10 rounded-xl p-4 min-h-[60px]">
-                        <div className="w-3 h-3 bg-green-400 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1">
-                          <span className="font-medium">Bundle size reduced</span>
-                          <div className="text-xs text-gray-400 mt-1">Webpack optimization complete</div>
-                        </div>
-                        <span className="text-xs text-gray-400">2m ago</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-gray-200 bg-white/10 rounded-xl p-4 min-h-[60px]">
-                        <div className="w-3 h-3 bg-orange-400 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1">
-                          <span className="font-medium">Performance check</span>
-                          <div className="text-xs text-gray-400 mt-1">Lighthouse audit completed</div>
-                        </div>
-                        <span className="text-xs text-gray-400">5m ago</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-gray-200 bg-white/10 rounded-xl p-4 min-h-[60px]">
-                        <div className="w-3 h-3 bg-blue-400 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1">
-                          <span className="font-medium">Code analysis</span>
-                          <div className="text-xs text-gray-400 mt-1">ESLint checks passed</div>
-                        </div>
-                        <span className="text-xs text-gray-400">8m ago</span>
-                      </div>
-                    </AnimatedList>
-                  ) : (
-                    <div className="h-32"></div>
-                  )}
-                </div>
-                
-                <div className="mt-1 pt-1 border-t border-white/10">
-                  <span className="text-white/70 text-xs underline cursor-pointer hover:text-white/90 transition-colors">
-                    View Details
-                  </span>
-                </div>
-              </div>
-            </LiquidGlass>
-          </div>
-          
-          <div className={`flex flex-col transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${
-            showBoxes[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-          }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-6 h-6 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
-                <Server className="w-3 h-3 text-white/60" />
-              </div>
-              <h3 className="text-white/60 text-2xl font-medium">Server Insight</h3>
-            </div>
-            <LiquidGlass
-              variant="panel"
-              intensity="medium"
-              rippleEffect={false}
-              flowOnHover={true}
-              stretchOnDrag={false}
-              className="w-80 h-80 bg-gradient-to-br from-white/20 via-white/10 to-white/5 backdrop-blur-md rounded-xl shadow-2xl shadow-black/30 border border-white/20 border-t-white/30 border-l-white/25"
-              style={{
-                animation: `float2 5.2s ease-in-out infinite`,
-                transform: 'rotateX(12deg) rotateY(0deg) translateZ(30px)',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3)'
-              }}
-            >
-              <div className="w-full h-full flex flex-col px-0.5 py-1 relative overflow-hidden">
-                <Ripple 
-                  mainCircleSize={120}
-                  mainCircleOpacity={0.04}
-                  numCircles={3}
-                />
-                
-                <div className="flex-1 flex flex-col items-center justify-center relative z-10">
-                  <div className="mb-4">
-                    <AnimatedCircularProgressBar
-                      max={100}
-                      min={0}
-                      value={75}
-                      gaugePrimaryColor="rgb(34 197 94)"
-                      gaugeSecondaryColor="rgba(255, 255, 255, 0.1)"
-                      className="w-32 h-32"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <div className="text-white text-sm font-medium mb-1">Server Performance</div>
-                    <div className="text-gray-300 text-xs">75% optimal</div>
-                    <div className="text-orange-300 text-xs mt-2">4 slow endpoints detected</div>
-                  </div>
-                </div>
-                
-                <div className="mt-1 pt-1 border-t border-white/10">
-                  <span className="text-white/70 text-xs underline cursor-pointer hover:text-white/90 transition-colors">
-                    View Details
-                  </span>
-                </div>
-              </div>
-            </LiquidGlass>
-          </div>
-          
-          <div className={`flex flex-col transition-all duration-[1500ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${
-            showBoxes[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-          }`}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-6 h-6 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
-                <Zap className="w-3 h-3 text-white/60" />
-              </div>
-              <h3 className="text-white/60 text-2xl font-medium">Optimize Performance</h3>
-            </div>
-            <LiquidGlass
-              variant="panel"
-              intensity="medium"
-              rippleEffect={false}
-              flowOnHover={true}
-              stretchOnDrag={false}
-              className="w-80 h-80 bg-gradient-to-br from-white/20 via-white/10 to-white/5 backdrop-blur-md rounded-xl shadow-2xl shadow-black/30 border border-white/20 border-t-white/30 border-l-white/25"
-              style={{
-                animation: `float3 6s ease-in-out infinite`,
-                transform: 'rotateX(15deg) rotateY(8deg) translateZ(20px)',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3)'
-              }}
-            >
-              <div className="w-full h-full flex flex-col px-4 py-4 relative" ref={containerRef}>
-                <Particles
-                  className="absolute inset-0 opacity-40"
-                  quantity={30}
-                  staticity={30}
-                  size={0.3}
-                  color="#ffffff"
-                />
-                
-                <div className="text-center mb-6 relative z-10">
-                  <div className="text-white text-sm font-medium">Performance Optimization</div>
-                  <div className="text-gray-400 text-xs">Connect and accelerate</div>
-                </div>
-                
-                <div className="flex-1 flex items-center justify-center relative z-10">
-                  <div className="flex justify-between items-center w-full px-4">
-                    <div className="text-center">
-                      <Circle ref={monitorRef}>
-                        <Activity className="w-5 h-5 text-black" />
-                      </Circle>
-                      <div className="text-xs text-gray-300 font-medium mt-2">Monitor</div>
-                      <div className="text-[10px] text-gray-500">2.3s</div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <Circle ref={optimizeRef}>
-                        <Zap className="w-5 h-5 text-black" />
-                      </Circle>
-                      <div className="text-xs text-gray-300 font-medium mt-2">Process</div>
-                      <div className="text-[10px] text-orange-400">1.2s</div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <Circle ref={resultRef}>
-                        <Gauge className="w-5 h-5 text-black" />
-                      </Circle>
-                      <div className="text-xs text-gray-300 font-medium mt-2">Optimize</div>
-                      <div className="text-[10px] text-green-400">0.8s</div>
-                    </div>
-                  </div>
-                  
-                  {/* Simple connecting lines */}
-                  <div className="absolute inset-0 pointer-events-none">
-                    <svg className="w-full h-full">
-                      <line 
-                        x1="15%" 
-                        y1="38%" 
-                        x2="42%" 
-                        y2="38%" 
-                        stroke="rgba(255,255,255,0.15)" 
-                        strokeWidth="2"
-                        strokeDasharray="5,5"
-                        className="animate-pulse"
-                      />
-                      <line 
-                        x1="58%" 
-                        y1="38%" 
-                        x2="85%" 
-                        y2="38%" 
-                        stroke="rgba(255,255,255,0.15)" 
-                        strokeWidth="2"
-                        strokeDasharray="5,5"
-                        className="animate-pulse"
-                        style={{ animationDelay: '0.5s' }}
-                      />
-                    </svg>
-                  </div>
-                </div>
-                
-                <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center relative z-10">
-                  <span className="text-white/60 text-xs underline cursor-pointer hover:text-white/80 transition-colors">
-                    View Details
-                  </span>
-                  <button className="px-3 py-2 bg-gradient-to-r from-white/80 to-gray-200/80 hover:from-white hover:to-gray-200 text-gray-800 text-xs font-medium rounded-full transition-all duration-300 shadow-lg hover:shadow-white/20 hover:scale-105">
-                    Optimize Now
-                  </button>
-                </div>
-              </div>
-            </LiquidGlass>
-          </div>
-        </div>
-      )}
-
-
       <style jsx>{`
+        @keyframes shimmer-very-slow {
+          0% { background-position: -200% 50%; }
+          100% { background-position: 200% 50%; }
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
         @keyframes float1 {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-8px); }
@@ -428,9 +415,35 @@ const Hero = () => {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-6px); }
         }
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
+        @keyframes float-enhanced {
+          0%, 100% { 
+            transform: translate3d(0px, 0px, 0px) rotate(0deg);
+          }
+          25% { 
+            transform: translate3d(8px, -12px, 10px) rotate(1deg);
+          }
+          50% { 
+            transform: translate3d(-6px, -20px, 15px) rotate(-0.5deg);
+          }
+          75% { 
+            transform: translate3d(-10px, -8px, 8px) rotate(0.8deg);
+          }
+        }
+        @keyframes float-gentle-exit {
+          0%, 100% { 
+            transform: translate3d(0px, 0px, 0px) rotate(0deg) scale(1);
+          }
+          50% { 
+            transform: translate3d(-15px, -25px, 5px) rotate(-1deg) scale(0.98);
+          }
+        }
+        @keyframes float1 {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        @keyframes float2 {
+          0%, 100% { transform: translateY(-2px); }
+          50% { transform: translateY(-10px); }
         }
         @keyframes float-slow {
           0%, 100% { transform: translate(0px, 0px) scale(1); }
@@ -466,23 +479,37 @@ const Hero = () => {
         .animate-shimmer {
           animation: shimmer 2s ease-in-out infinite;
         }
-        .animate-float-slow {
-          animation: float-slow 20s ease-in-out infinite;
+        .animate-shimmer-very-slow {
+          animation: shimmer-very-slow 3s ease-in-out infinite;
         }
-        .animate-float-slower {
-          animation: float-slower 25s ease-in-out infinite;
+        /* Combined float + pulse so both animations can run together */\n        .animate-float-slow-pulse {\n          animation: float-slow 20s ease-in-out infinite, pulse-slow 4s ease-in-out infinite;\n        }\n        .animate-float-slower-pulse {\n          animation: float-slower 25s ease-in-out infinite, pulse-slow 4s ease-in-out infinite;\n        }\n        .animate-float-reverse-pulse {\n          animation: float-reverse 18s ease-in-out infinite reverse, pulse-slow 4s ease-in-out infinite;\n        }\n        .animate-float-diagonal-pulse {\n          animation: float-diagonal 22s ease-in-out infinite, pulse-slow 4s ease-in-out infinite;\n        }\n        .animate-float-orbit-pulse {\n          animation: float-orbit 30s ease-in-out infinite, pulse-slow 4s ease-in-out infinite;\n        }\n        .animate-float-gentle-pulse {\n          animation: float-gentle 16s ease-in-out infinite, pulse-slow 4s ease-in-out infinite;\n        }
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out forwards;
         }
-        .animate-float-reverse {
-          animation: float-reverse 18s ease-in-out infinite reverse;
+        @keyframes fade-in {
+          0% { 
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          100% { 
+            opacity: 1;
+            transform: translateY(0px) scale(1);
+          }
         }
-        .animate-float-diagonal {
-          animation: float-diagonal 22s ease-in-out infinite;
+        .animate-float-enhanced {
+          animation: float-enhanced 8s ease-in-out infinite;
+          animation-delay: 0.5s;
         }
-        .animate-float-orbit {
-          animation: float-orbit 30s ease-in-out infinite;
+        .animate-float-gentle-exit {
+          animation: float-gentle-exit 6s ease-in-out infinite;
+          animation-delay: 1s;
         }
-        .animate-float-gentle {
-          animation: float-gentle 16s ease-in-out infinite;
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.05); }
         }
         .bg-gradient-radial {
           background: radial-gradient(circle, var(--tw-gradient-stops));
