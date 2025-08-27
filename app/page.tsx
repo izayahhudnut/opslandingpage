@@ -7,7 +7,7 @@ import { ArrowRight, Container, Github, Hexagon, BarChart3 } from 'lucide-react'
 import { AnimatedBeam } from "@/components/magicui/animated-beam";
 import React, { forwardRef, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Spotlight } from "@/components/ui/spotlight";
+import { Spotlight } from "@/components/ui/spotlight-new";
 import { ThreeCardSection } from "@/components/ThreeCardSection";
 import { FlipWords } from "@/components/ui/flip-words";
 
@@ -211,11 +211,15 @@ export default function Home() {
         <Hero />
       </div>
       
-      {/* Combined Always Running + Spotlight Section */}
-      <div className="relative w-full overflow-hidden">
-        {/* First part: Always Running with black background */}
-        <div className="bg-black">
-          <div className="max-w-7xl mx-auto px-6 pt-40 pb-16">
+      {/* Combined Section with Spotlight positioned for Operational Intelligence Engine */}
+      <div className="relative w-full overflow-hidden bg-black">
+        <Spotlight 
+          translateY={-200}
+        />
+        
+        {/* Always Running Section */}
+        <div className="relative z-10">
+          <div className="max-w-7xl mx-auto px-6 pt-16 pb-32">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               {/* Left Content */}
               <div className="space-y-6 animate-in slide-in-from-bottom-8 fade-in duration-1000" id="about-content">
@@ -253,10 +257,10 @@ export default function Home() {
                 
                 {/* CTA Button */}
                 <div className="pt-6">
-                  <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-white to-gray-50 text-black font-medium rounded-lg hover:from-gray-50 hover:to-gray-100 transition-all shadow-lg shadow-white/20 hover:shadow-lg hover:shadow-white/25">
+                  <a href="https://cal.com/kenneth-eversole/demos" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-white to-gray-50 text-black font-medium rounded-lg hover:from-gray-50 hover:to-gray-100 transition-all shadow-lg shadow-white/20 hover:shadow-lg hover:shadow-white/25">
                     Get Started
                     <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </a>
                 </div>
                 
               </div>
@@ -330,132 +334,25 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Second part: Spotlight background starts here */}
-        <div className="relative flex h-[20rem] w-full bg-black/[0.02] antialiased items-center justify-center">
-          <div
-            className={cn(
-              "pointer-events-none absolute inset-0 [background-size:40px_40px] select-none opacity-10",
-              "[background-image:linear-gradient(to_right,#171717_1px,transparent_1px),linear-gradient(to_bottom,#171717_1px,transparent_1px)]",
-            )}
-          />
-          
-          <Spotlight
-            className="-top-20 left-0 md:-top-10 md:left-40"
-            fill="white"
-          />
-          
-          <div className="relative z-10 mx-auto w-full max-w-4xl p-4 text-center">
-            <h1 className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-center text-3xl font-bold text-transparent md:text-5xl leading-tight mb-4">
-              Operational Intelligence Engine
-            </h1>
-            <p className="mx-auto max-w-2xl text-center text-lg font-normal text-neutral-300">
-              The missing layer that bridges platform engineering, security, and automation.
-            </p>
+        {/* Operational Intelligence Engine + Three Cards Section */}
+        <div className="relative z-10 bg-black/[0.02] bg-grid-white/[0.02]">
+          {/* Text Section */}
+          <div className="flex md:items-center md:justify-center h-48">
+            <div className="p-4 max-w-4xl mx-auto w-full pt-20 md:pt-0 text-center">
+              <h1 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 leading-tight mb-4">
+                Operational Intelligence Engine
+              </h1>
+              <p className="mt-4 font-normal text-lg text-neutral-300 max-w-2xl mx-auto">
+                The missing layer that bridges platform engineering, security, and automation.
+              </p>
+            </div>
           </div>
+          
+          {/* Three Card Section within spotlight */}
+          <ThreeCardSection />
         </div>
       </div>
       
-      {/* Three Card Section */}
-      <ThreeCardSection />
-      
-      {/* Much More Vertical Space */}
-      <div className="h-64 bg-black"></div>
-      
-      {/* Two Feature Sections */}
-      <div className="bg-black" id="features-section">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Feature - Infrastructure Mapping */}
-            <div className="space-y-4 animate-in slide-in-from-bottom-8 fade-in duration-1000" id="monitoring-feature">
-              <h3 className="text-white text-2xl font-semibold mb-4">Infrastructure Mapping</h3>
-              <p className="text-gray-400 text-base leading-relaxed mb-4">
-                Ops automatically maps your entire infrastructure landscape. 
-                From servers to services, we understand every connection and dependency.
-              </p>
-              {/* Node network visualization */}
-              <div className="flex items-center justify-start pt-2 pb-8">
-                <div className="relative w-48 h-32">
-                  {/* Central node */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white/20 border-2 border-white/40 rounded-full flex items-center justify-center animate-pulse">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
-                  
-                  {/* Surrounding nodes */}
-                  <div className="absolute top-2 left-8 w-5 h-5 bg-white/20 border border-white/40 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="absolute top-4 right-6 w-4 h-4 bg-black/20 border border-black/40 rounded-full animate-pulse" style={{ animationDelay: '0.8s' }}></div>
-                  <div className="absolute bottom-3 left-4 w-6 h-6 bg-gray-400/20 border border-gray-400/40 rounded-full animate-pulse" style={{ animationDelay: '1.2s' }}></div>
-                  <div className="absolute bottom-2 right-8 w-4 h-4 bg-stone-600/20 border border-stone-600/40 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
-                  <div className="absolute top-8 right-12 w-3 h-3 bg-gray-300/20 border border-gray-300/40 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-                  <div className="absolute bottom-8 left-12 w-5 h-5 bg-stone-400/20 border border-stone-400/40 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                  
-                  {/* Connection lines */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                    <line x1="50%" y1="50%" x2="20%" y2="15%" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" />
-                    <line x1="50%" y1="50%" x2="80%" y2="25%" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" style={{ animationDelay: '0.3s' }} />
-                    <line x1="50%" y1="50%" x2="25%" y2="80%" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" style={{ animationDelay: '0.6s' }} />
-                    <line x1="50%" y1="50%" x2="75%" y2="85%" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" style={{ animationDelay: '0.9s' }} />
-                    <line x1="50%" y1="50%" x2="85%" y2="35%" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" style={{ animationDelay: '0.1s' }} />
-                    <line x1="50%" y1="50%" x2="35%" y2="75%" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2" className="animate-pulse" style={{ animationDelay: '0.7s' }} />
-                  </svg>
-                  
-                  {/* Discovery status */}
-                  <div className="absolute -bottom-12 left-0 text-xs text-gray-300">
-                    <div className="bg-white/5 px-4 py-2 rounded-full border border-white/10">47 services discovered</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Vertical Divider */}
-            <div className="hidden lg:block absolute left-1/2 top-16 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent transform -translate-x-1/2"></div>
-            
-            {/* Right Feature - Intelligent Operations */}
-            <div className="space-y-4 pl-8 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200" id="scaling-feature">
-              <h3 className="text-white text-2xl font-semibold mb-4">Intelligent Operations</h3>
-              <p className="text-gray-400 text-base leading-relaxed mb-4">
-                AI understands your entire infrastructure ecosystem and proactively optimizes 
-                performance, costs, and reliability before issues impact your business.
-              </p>
-              {/* Operations visualization */}
-              <div className="flex items-center gap-6 py-8">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-green-400 rounded-sm animate-pulse"></div>
-                    <div className="text-xs text-gray-400">Performance</div>
-                    <div className="w-16 h-1 bg-green-400/20 rounded-full relative">
-                      <div className="absolute left-0 top-0 h-full w-5/6 bg-green-400 rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-blue-400 rounded-sm animate-pulse" style={{ animationDelay: '0.3s' }}></div>
-                    <div className="text-xs text-gray-400">Cost Efficiency</div>
-                    <div className="w-16 h-1 bg-blue-400/20 rounded-full relative">
-                      <div className="absolute left-0 top-0 h-full w-3/4 bg-blue-400 rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-purple-400 rounded-sm animate-pulse" style={{ animationDelay: '0.6s' }}></div>
-                    <div className="text-xs text-gray-400">Reliability</div>
-                    <div className="w-16 h-1 bg-purple-400/20 rounded-full relative">
-                      <div className="absolute left-0 top-0 h-full w-4/5 bg-purple-400 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-sm text-gray-400 pt-4">
-                  <div className="text-green-400 mb-2">Optimizing</div>
-                  <div className="text-gray-500">AI-driven</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Minimal Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mx-auto max-w-2xl"></div>
-      
-      {/* Less Space */}
-      <div className="h-12 bg-black"></div>
       
       {/* Third Section - DevOps Ecosystem */}
       <div className="bg-black" id="ecosystem-section">
@@ -543,10 +440,10 @@ export default function Home() {
             
             {/* Centered Button */}
             <div className="pt-8 flex justify-center">
-              <button className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-white to-gray-50 text-black font-medium rounded-lg hover:from-gray-50 hover:to-gray-100 transition-all shadow-lg shadow-white/20 hover:shadow-lg hover:shadow-white/25">
+              <a href="https://cal.com/kenneth-eversole/demos" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-white to-gray-50 text-black font-medium rounded-lg hover:from-gray-50 hover:to-gray-100 transition-all shadow-lg shadow-white/20 hover:shadow-lg hover:shadow-white/25">
                 Get Started
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </a>
             </div>
           </div>
           
